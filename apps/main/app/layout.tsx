@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { Cairo } from 'next/font/google'
-import "../../../styles/globals.css"
+import "../styles/globals.css""
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/utils'
 
 const cairo = Cairo({
