@@ -1,20 +1,17 @@
 {
-  "name": "saudi-leaks-workspace",
-  "version": "0.1.0",
+  "name": "saudi-leaks-monorepo",
   "private": true,
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "scripts": {
-    "dev:main": "npm run dev --workspace @saudi-leaks/main",
-    "dev:admin": "npm run dev --workspace @saudi-leaks/admin",
-    "build:main": "npm run build --workspace @saudi-leaks/main",
-    "build:admin": "npm run build --workspace @saudi-leaks/admin",
-    "start:main": "npm run start --workspace @saudi-leaks/main",
-    "start:admin": "npm run start --workspace @saudi-leaks/admin",
-    "lint:main": "npm run lint --workspace @saudi-leaks/main",
-    "lint:admin": "npm run lint --workspace @saudi-leaks/admin"
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "turbo": "^2.3.3"
+  },
+  "packageManager": "npm@10.9.2"
 }

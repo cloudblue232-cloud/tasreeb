@@ -1,8 +1,8 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient } from '@saudi-leaks/shared/supabase/server'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
-import ConfirmDeleteButton from '@/components/admin/ConfirmDeleteButton'
+import DeleteButton from '@/components/admin/DeleteButton'
 
 export const metadata: Metadata = { title: 'إدارة الخدمات | Admin' }
 
@@ -24,22 +24,78 @@ export default async function AdminServicesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-extrabold text-gray-900">إدارة الخدمات</h1>
-        <Link href="/admin/services/new" id="services-new-btn" className="btn-primary">➕ خدمة جديدة</Link>
+        <div>
+          <h1 className="text-2xl font-extrabold text-gray-900">إدارة الخدمات</h1>
+          <p className="text-gray-500 mt-1">{services?.length ?? 0} خدمة</p>
+        </div>
+        <Link href="/admin/services/new" id="services-new-btn" className="btn-primary">
+          ➕ خدمة جديدة
+        </Link>
       </div>
-      <div className="space-y-3">
-        {(services ?? []).map(service => (
-          <div key={service.id} className="bg-white rounded-xl border border-gray-100 p-4 flex items-center justify-between gap-3">
-            <p className="font-semibold text-gray-900">{service.title}</p>
-            <div className="flex items-center gap-2">
-              <Link href={`/admin/services/${service.id}`} className="text-xs font-bold text-blue-600">تعديل</Link>
-              <form action={deleteService}>
-                <input type="hidden" name="id" value={service.id} />
-                <ConfirmDeleteButton id={`delete-service-${service.id}`} confirmMessage="هل أنت متأكد من حذف هذه الخدمة؟" />
-              </form>
-            </div>
+
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {(!services || services.length === 0) ? (
+          <div className="py-20 text-center text-gray-400">
+            <div className="text-5xl mb-4">🛠️</div>
+            <p className="font-medium">لا توجد خدمات بعد</p>
+            <Link href="/admin/services/new" className="text-blue-600 font-semibold mt-2 inline-block hover:underline">
+              أضف أول خدمة
+            </Link>
           </div>
-        ))}
+        ) : (
+          <table className="w-full text-right">
+            <thead className="bg-gray-50 border-b border-gray-100">
+              <tr>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">اسم الخدمة</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase hidden md:table-cell">Slug</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase hidden sm:table-cell">التاريخ</th>
+                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {services.map(service => (
+                <tr key={service.id} className="hover:bg-gray-50/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <p className="font-semibold text-gray-900 text-sm">{service.title}</p>
+                  </td>
+                  <td className="px-6 py-4 hidden md:table-cell">
+                    <span className="text-xs text-gray-400 font-mono bg-gray-100 px-2 py-1 rounded-md">{service.slug}</span>
+                  </td>
+                  <td className="px-6 py-4 hidden sm:table-cell">
+                    <span className="text-xs text-gray-400">
+                      {new Date(service.created_at).toLocaleDateString('ar-SA')}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/admin/services/${service.id}`}
+                        id={`edit-service-${service.id}`}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        تعديل
+                      </Link>
+                      <Link
+                        href={`/services/${service.slug}`}
+                        target="_blank"
+                        className="text-xs font-bold text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        عرض
+                      </Link>
+                      <form action={deleteService}>
+                        <input type="hidden" name="id" value={service.id} />
+                        <DeleteButton
+                          id={`delete-service-${service.id}`}
+                          message="هل أنت متأكد من حذف هذه الخدمة؟"
+                        />
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   )
